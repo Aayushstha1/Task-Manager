@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <h2>Welcome Admin</h2>
+
+  <h3>Create Employee</h3>
+  <form id="createEmployeeForm">
+    <input type="text" name="username" placeholder="Employee Username" required>
+    <input type="password" name="password" placeholder="Employee Password" required>
+    <button type="submit">Create</button>
+  </form>
+
+  <h3>Assign Task</h3>
+  <form id="assignTaskForm">
+    <input type="text" name="title" placeholder="Task Title" required>
+    <input type="text" name="description" placeholder="Task Description" required>
+    <input type="number" name="employeeId" placeholder="Employee ID" required>
+    <button type="submit">Assign</button>
+  </form>
+
+  <h3>Promote Employee</h3>
+  <form id="promoteForm">
+    <input type="number" name="employeeId" placeholder="Employee ID" required>
+    <button type="submit">Promote</button>
+  </form>
+
+  <h3>All Tasks</h3>
+  <ul id="taskList"></ul>
+
+  <script>
+    async function fetchTasks() {
+      let res = await fetch("/tasks");
+      let tasks = await res.json();
+      document.getElementById("taskList").innerHTML =
+        tasks.map(t => `<li>${t.id}. ${t.title} - ${t.status}</li>`).join("");
+    }
+    fetchTasks();
+
+    document.getElementById("createEmployeeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let data = Object.fromEntries(new FormData(e.target).entries());
+      await fetch("/admin/create-employee", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      alert("Employee created!");
+    });
+
+    document.getElementById("assignTaskForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let data = Object.fromEntries(new FormData(e.target).entries());
+      await fetch("/admin/assign-task", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      alert("Task assigned!");
+      fetchTasks();
+    });
+
+    document.getElementById("promoteForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let data = Object.fromEntries(new FormData(e.target).entries());
+      await fetch("/admin/promote", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      alert("Employee promoted!");
+    });
+  </script>
+</body>
+</html>
