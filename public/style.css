@@ -1,0 +1,179 @@
+/* ---------- Reset & Base Styles ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6b73ff, #000dff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---------- Card Containers ---------- */
+.container, .dashboard-card {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ---------- Headings ---------- */
+h2, h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* ---------- Inputs & Textareas ---------- */
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+input:focus, textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0,123,255,0.5);
+  outline: none;
+}
+
+/* ---------- Buttons ---------- */
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button[type="submit"] {
+  width: 100%;
+  margin: 15px 0;
+  background: #007bff;
+  color: #fff;
+  font-size: 16px;
+}
+
+button[type="submit"]:hover {
+  background: #0056b3;
+}
+
+.logout-btn {
+  background: #dc3545;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.logout-btn:hover {
+  background: #a71d2a;
+}
+
+.btn-assign {
+  background: #28a745;
+  color: #fff;
+}
+
+.btn-assign:hover {
+  background: #218838;
+}
+
+.btn-promote {
+  background: #ffc107;
+  color: #fff;
+}
+
+.btn-promote:hover {
+  background: #e0a800;
+}
+
+/* ---------- Links ---------- */
+a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Error Messages ---------- */
+#errorMsg {
+  color: red;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+/* ---------- Task / Employee Cards ---------- */
+.task, .employee {
+  background: #e9f1ff;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task button, .employee button {
+  width: auto;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.task button:hover, .employee button:hover {
+  opacity: 0.9;
+}
+
+/* ---------- Tables ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background: #007bff;
+  color: #fff;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .container, .dashboard-card {
+    width: 90%;
+    padding: 20px;
+  }
+  table {
+    font-size: 12px;
+  }
+}
+
+/* ---------- Dashboard Layout ---------- */
+.dashboard {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.dashboard-card {
+  margin-bottom: 20px;
+}

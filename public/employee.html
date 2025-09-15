@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: linear-gradient(135deg,#6b73ff,#000dff); display:flex; justify-content:center; align-items:center; min-height:100vh; }
+    .dashboard { max-width:900px; width:100%; margin:20px auto; padding:20px; background:#fff; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+    h2 { text-align:center; margin-bottom:20px; }
+    .task { background:#e9f1ff; padding:12px; margin:8px 0; border-radius:10px; display:flex; justify-content:space-between; align-items:center; }
+    .task button { padding:6px 12px; border-radius:6px; background:#28a745; color:#fff; cursor:pointer; border:none; }
+    .task button:hover { background:#218838; }
+    .logout-btn { background:#dc3545; color:#fff; padding:10px 15px; border:none; border-radius:8px; cursor:pointer; margin-bottom:15px; }
+    .logout-btn:hover { background:#a71d2a; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+    <h2>Employee Dashboard</h2>
+    <div id="tasksContainer"></div>
+  </div>
+
+  <script>
+    async function fetchTasks() {
+      const res = await fetch('/tasks');
+      const tasks = await res.json();
+      const container = document.getElementById('tasksContainer');
+      container.innerHTML = '';
+      if(tasks.length === 0){
+        container.innerHTML = '<p>No tasks assigned yet.</p>';
+        return;
+      }
+      tasks.forEach(task => {
+        const div = document.createElement('div');
+        div.className = 'task';
+        div.innerHTML = `
+          <div><strong>${task.title}</strong><br>${task.description}<br>Status: ${task.status}</div>
+          ${task.status === 'Assigned' ? `<button onclick="submitTask(${task.id})">Mark Completed</button>` : '<span>✅ Completed</span>'}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function submitTask(taskId) {
+      const res = await fetch('/employee/submit-task', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ taskId })
+      });
+      if(res.ok) {
+        alert('Task marked as completed!');
+        fetchTasks();
+      } else {
+        alert(await res.text());
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if(confirm('Do you really want to logout?')){
+        window.location.href = '/logout';
+      }
+    });
+
+    fetchTasks();
+  </script>
+</body>
+</html>

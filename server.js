@@ -31,6 +31,7 @@ const db = new sqlite3.Database("./database.db", (err) => {
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id TEXT UNIQUE,
     username TEXT UNIQUE,
     password TEXT,
     role TEXT
@@ -60,6 +61,21 @@ db.serialize(() => {
   });
 });
 
+// Signup route (Employee Signup)
+app.post("/signup", (req, res) => {
+  const { username, password } = req.body;
+  const hashed = bcrypt.hashSync(password, 10);
+
+  db.run(
+    `INSERT INTO users (username, password, role) VALUES (?, ?, 'employee')`,
+    [username, hashed],
+    function (err) {
+      if (err) return res.status(400).send("Username already exists!");
+      res.send("Signup success! Please login.");
+    }
+  );
+});
+
 // Login
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
@@ -82,7 +98,7 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-// Admin: Create Employee
+// Admin: Create Employee (optional, admin can also create employee)
 app.post("/admin/create-employee", (req, res) => {
   if (!req.session.user || req.session.user.role !== "admin")
     return res.status(403).send("Access denied");
@@ -91,8 +107,8 @@ app.post("/admin/create-employee", (req, res) => {
   const hashed = bcrypt.hashSync(password, 10);
 
   db.run(
-    `INSERT INTO users (username, password, role) VALUES (?, ?, ?)`,
-    [username, hashed, "employee"],
+    `INSERT INTO users (username, password, role) VALUES (?, ?, 'employee')`,
+    [username, hashed],
     function (err) {
       if (err) return res.status(400).send("User already exists");
       res.send("Employee created successfully");
@@ -152,6 +168,25 @@ app.post("/admin/promote", (req, res) => {
   );
 });
 
+// Admin: View all employees + their tasks
+app.get("/admin/employees", (req, res) => {
+  if (!req.session.user || req.session.user.role !== "admin")
+    return res.status(403).send("Access denied");
+
+  db.all(
+    `SELECT u.id, u.username, u.role, t.id as taskId, t.title, t.status
+     FROM users u
+     LEFT JOIN tasks t ON u.id = t.assigned_to
+     WHERE u.role='employee'
+     ORDER BY u.id`,
+    [],
+    (err, rows) => {
+      if (err) return res.status(500).send(err.message);
+      res.json(rows);
+    }
+  );
+});
+
 // Get tasks (for both roles)
 app.get("/tasks", (req, res) => {
   if (!req.session.user) return res.status(403).send("Not logged in");
@@ -170,6 +205,44 @@ app.get("/tasks", (req, res) => {
     );
   }
 });
+
+// Signup route (for employees)
+app.post("/signup", (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).send("Username and password are required");
+  }
+
+  const hashed = bcrypt.hashSync(password, 10);
+
+  // Generate a random employee ID (e.g., EMP1234)
+  const empId = "EMP" + Math.floor(1000 + Math.random() * 9000);
+
+  db.run(
+    `INSERT INTO users (employee_id, username, password, role) VALUES (?, ?, ?, ?)`,
+    [empId, username, hashed, "employee"],
+    function (err) {
+      if (err) {
+        if (err.message.includes("UNIQUE")) return res.status(400).send("Username or employee ID already exists");
+        return res.status(500).send("Database error");
+      }
+      res.send(`Signup successful! Your Employee ID: ${empId}`);
+    }
+  );
+});
+
+app.get("/admin/employees", (req, res) => {
+  if (!req.session.user || req.session.user.role !== "admin")
+    return res.status(403).send("Access denied");
+
+  db.all(`SELECT id, employee_id, username, role FROM users WHERE role='employee'`, [], (err, rows) => {
+    if(err) return res.status(500).send("Database error");
+    res.json(rows);
+  });
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

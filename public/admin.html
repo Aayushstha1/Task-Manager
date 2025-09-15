@@ -1,73 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    h3 { margin-top: 20px; color:#333; }
+    .dashboard { max-width: 1200px; margin: 20px auto; padding:20px; }
+    .card { background:#fff; border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+    table { width:100%; border-collapse: collapse; margin-top:10px; }
+    th, td { border:1px solid #ccc; padding:10px; text-align:left; }
+    th { background:#007bff; color:#fff; }
+    button { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; transition:0.3s; }
+    .btn-assign { background:#28a745; color:#fff; }
+    .btn-assign:hover { background:#218838; }
+    .btn-promote { background:#ffc107; color:#fff; }
+    .btn-promote:hover { background:#e0a800; }
+  </style>
 </head>
 <body>
-  <h2>Welcome Admin</h2>
+  <div class="dashboard">
+    <h2>Welcome Admin</h2>
+    <button class="logout-btn" onclick="confirmLogout()">Logout</button>
 
-  <h3>Create Employee</h3>
-  <form id="createEmployeeForm">
-    <input type="text" name="username" placeholder="Employee Username" required>
-    <input type="password" name="password" placeholder="Employee Password" required>
-    <button type="submit">Create</button>
-  </form>
+    <!-- Assign Task -->
+    <div class="card">
+      <h3>Assign Task</h3>
+      <form id="assignTaskForm">
+        <input type="text" name="title" placeholder="Task Title" required>
+        <input type="text" name="description" placeholder="Task Description" required>
+        <input type="number" name="employeeId" placeholder="Employee ID" required>
+        <button type="submit" class="btn-assign">Assign</button>
+      </form>
+    </div>
 
-  <h3>Assign Task</h3>
-  <form id="assignTaskForm">
-    <input type="text" name="title" placeholder="Task Title" required>
-    <input type="text" name="description" placeholder="Task Description" required>
-    <input type="number" name="employeeId" placeholder="Employee ID" required>
-    <button type="submit">Assign</button>
-  </form>
+    <!-- Promote Employee -->
+    <div class="card">
+      <h3>Promote Employee</h3>
+      <form id="promoteForm">
+        <input type="number" name="employeeId" placeholder="Employee ID" required>
+        <button type="submit" class="btn-promote">Promote</button>
+      </form>
+    </div>
 
-  <h3>Promote Employee</h3>
-  <form id="promoteForm">
-    <input type="number" name="employeeId" placeholder="Employee ID" required>
-    <button type="submit">Promote</button>
-  </form>
-
-  <h3>All Tasks</h3>
-  <ul id="taskList"></ul>
+    <!-- Employee List & Tasks -->
+    <div class="card">
+      <h3>Employees & Their Tasks</h3>
+      <div id="employeeList"></div>
+    </div>
+  </div>
 
   <script>
-    async function fetchTasks() {
-      let res = await fetch("/tasks");
-      let tasks = await res.json();
-      document.getElementById("taskList").innerHTML =
-        tasks.map(t => `<li>${t.id}. ${t.title} - ${t.status}</li>`).join("");
+    // Logout confirmation
+    function confirmLogout() {
+      if(confirm("Do you really want to logout?")) {
+        window.location.href="/logout";
+      }
     }
-    fetchTasks();
 
-    document.getElementById("createEmployeeForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      let data = Object.fromEntries(new FormData(e.target).entries());
-      await fetch("/admin/create-employee", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+    // Fetch employees + tasks
+    async function fetchEmployees() {
+      const res = await fetch("/admin/employees");
+      const data = await res.json();
+      const container = document.getElementById("employeeList");
+      let html = `<table>
+        <tr><th>ID</th><th>Username</th><th>Tasks</th></tr>`;
+      let currentId = 0;
+      let tasksHtml = "";
+      data.forEach(e=>{
+        if(currentId!==e.id){
+          if(currentId!==0) html += `<td>${tasksHtml}</td></tr>`;
+          currentId = e.id;
+          tasksHtml = e.taskId ? `${e.title} - ${e.status}` : "No tasks";
+          html += `<tr><td>${e.id}</td><td>${e.username}</td>`;
+        } else {
+          tasksHtml += `<br>${e.title} - ${e.status}`;
+        }
       });
-      alert("Employee created!");
+      html += `<td>${tasksHtml}</td></tr></table>`;
+      container.innerHTML = html;
+    }
+
+    fetchEmployees();
+
+    // Assign Task
+    document.getElementById("assignTaskForm").addEventListener("submit", async e=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      await fetch("/admin/assign-task",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+      alert("Task Assigned");
+      fetchEmployees();
+      e.target.reset();
     });
 
-    document.getElementById("assignTaskForm").addEventListener("submit", async (e) => {
+    // Promote Employee
+    document.getElementById("promoteForm").addEventListener("submit", async e=>{
       e.preventDefault();
-      let data = Object.fromEntries(new FormData(e.target).entries());
-      await fetch("/admin/assign-task", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      alert("Task assigned!");
-      fetchTasks();
-    });
-
-    document.getElementById("promoteForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      let data = Object.fromEntries(new FormData(e.target).entries());
-      await fetch("/admin/promote", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      alert("Employee promoted!");
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      await fetch("/admin/promote",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+      alert("Employee Promoted");
+      fetchEmployees();
+      e.target.reset();
     });
   </script>
 </body>
