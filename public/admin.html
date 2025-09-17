@@ -6,266 +6,291 @@
   <link rel="stylesheet" href="style.css">
   <style>
     body {
+      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg,#6b73ff,#000dff);
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-      min-height:100vh;
-      margin:0;
-      padding:20px;
+      background: linear-gradient(135deg, #43e97b, #38f9d7);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
     }
-    .dashboard {
-      background:#fff;
-      border-radius:15px;
-      box-shadow:0 15px 40px rgba(0,0,0,0.3);
-      width:100%;
-      max-width:1000px;
-      padding:25px 20px;
-      display:flex;
-      flex-direction:column;
-      gap:20px;
-    }
-    h2 { text-align:center; margin-bottom:5px; color:#333; }
-    #adminInfo { text-align:center; font-weight:bold; color:#555; margin-bottom:15px; }
-    
-    #logoutBtn {
-      background:#dc3545;
-      color:#fff;
-      padding:10px 15px;
-      border:none;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:bold;
-      transition:0.3s;
-      align-self:flex-end;
-    }
-    #logoutBtn:hover { background:#a71d2a; }
 
-    /* Sections */
-    .section {
-      background:#f9f9f9;
-      padding:15px;
-      border-radius:12px;
-      box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    .dashboard {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      max-width: 1000px;
+      width: 100%;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
     }
-    .section h3 { margin-bottom:10px; color:#333; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    header h2 { margin:0; color:#333; }
+    .logout-btn {
+      background: #dc3545;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .logout-btn:hover { background: #a71d2a; }
+
+    /* Profile info */
+    .profile {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #f0f4ff;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .profile div { font-weight: 600; color: #333; }
+
+    /* Stats cards */
+    .stats {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px 20px;
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    .stat-card h3 { margin: 0 0 5px 0; color: #333; }
+    .stat-card p { margin: 0; font-size: 16px; font-weight: bold; }
 
     /* Employee list */
-    #employeeList, #tasksContainer {
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      max-height:300px;
-      overflow-y:auto;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
-    .employee, .task {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:12px;
-      border-radius:10px;
-      background:#e9f1ff;
-      transition:0.3s;
+    table th, table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
     }
-    .employee:hover, .task:hover { transform:translateY(-2px); }
-    .employee button, .task button {
-      padding:6px 12px;
-      border:none;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:bold;
-      transition:0.3s;
+    table th { background: #f0f4ff; }
+    table td button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
     }
-    .employee button { background:#007bff; color:#fff; }
-    .employee button:hover { background:#0056b3; }
-    .task button { background:#28a745; color:#fff; }
-    .task button:hover { background:#218838; }
+    table td button:hover { background: #0056b3; }
 
-    .status {
-      padding:5px 12px;
-      border-radius:6px;
-      font-weight:bold;
-      font-size:14px;
+    /* Task form */
+    .task-form {
+      background: #f0f4ff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .status.assigned { background:#ffc107; color:#000; }
-    .status.completed { background:#28a745; color:#fff; }
+    .task-form input, .task-form select, .task-form button {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .task-form input, .task-form select { flex: 1; min-width: 150px; }
+    .task-form button {
+      flex: none;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .task-form button:hover { background: #218838; }
 
-    input, select, button.assignTaskBtn {
-      padding:10px;
-      border-radius:8px;
-      border:1px solid #ccc;
-      font-size:14px;
-    }
-    button.assignTaskBtn {
-      background:#007bff;
-      color:#fff;
-      border:none;
-      font-weight:bold;
-      cursor:pointer;
-      transition:0.3s;
-    }
-    button.assignTaskBtn:hover { background:#0056b3; }
-
-    @media(max-width:768px){
-      .employee, .task { flex-direction:column; align-items:flex-start; gap:8px; }
-      #logoutBtn { align-self:center; width:100%; margin-bottom:10px; }
+    @media (max-width: 700px){
+      .stats { flex-direction: column; gap: 10px; }
+      .task-form { flex-direction: column; }
     }
   </style>
 </head>
 <body>
   <div class="dashboard">
-    <button id="logoutBtn">Logout</button>
-    <h2>Admin Dashboard</h2>
-    <p id="adminInfo">Welcome, Admin</p>
+    <header>
+      <h2>Admin Dashboard</h2>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </header>
 
-    <!-- Assign Task Section -->
-    <div class="section">
-      <h3>Assign Task to Employee</h3>
-      <form id="assignForm">
-        <input type="text" id="taskTitle" placeholder="Task Title" required>
-        <input type="text" id="taskDesc" placeholder="Task Description" required>
-        <select id="employeeSelect" required>
-          <option value="">Select Employee</option>
-        </select>
-        <button type="submit" class="assignTaskBtn">Assign Task</button>
-      </form>
+    <div class="profile" id="adminInfo">
+      Loading profile...
     </div>
 
-    <!-- Employee List Section -->
-    <div class="section">
-      <h3>Employee List</h3>
-      <div id="employeeList">Loading employees...</div>
+    <div class="stats">
+      <div class="stat-card" id="totalEmployees">Employees: 0</div>
+      <div class="stat-card" id="totalTasks">Tasks: 0</div>
+      <div class="stat-card" id="completedTasks">Completed: 0</div>
     </div>
 
-    <!-- Task List Section -->
-    <div class="section">
-      <h3>All Tasks</h3>
-      <div id="tasksContainer">Loading tasks...</div>
+    <h3>Assign Task</h3>
+    <div class="task-form">
+      <input type="text" id="taskTitle" placeholder="Task Title" required>
+      <input type="text" id="taskDesc" placeholder="Task Description" required>
+      <select id="employeeSelect">
+        <option value="">Select Employee</option>
+      </select>
+      <button id="assignBtn">Assign</button>
     </div>
+
+    <h3>Employees List</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Employee ID</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="employeeTable">
+        <tr><td colspan="3">Loading...</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <script>
-    // Fetch admin info
     async function getAdminInfo(){
       try{
         const res = await fetch('/me');
         if(res.ok){
           const data = await res.json();
-          document.getElementById('adminInfo').textContent = `Welcome, ${data.username} (Admin)`;
+          document.getElementById('adminInfo').innerHTML = `
+            <div><strong>Name:</strong> ${data.username}</div>
+            <div><strong>Role:</strong> ${data.role}</div>
+          `;
         }
-      } catch(err){ console.error(err); }
+      }catch(err){console.error(err);}
     }
 
-    // Fetch employees
     async function fetchEmployees(){
       try{
-        const res = await fetch('/admin/employees'); // create this endpoint in server.js
+        const res = await fetch('/admin/employees');
         const employees = await res.json();
-        const container = document.getElementById('employeeList');
+        const tableBody = document.getElementById('employeeTable');
         const select = document.getElementById('employeeSelect');
-        container.innerHTML = '';
+        tableBody.innerHTML = '';
         select.innerHTML = '<option value="">Select Employee</option>';
 
         employees.forEach(emp => {
-          // Employee List
-          const div = document.createElement('div');
-          div.className = 'employee';
-          div.innerHTML = `
-            <div>${emp.username} (ID: ${emp.employee_id})</div>
-            <button onclick="promoteEmployee(${emp.id})">Promote to Admin</button>
+          tableBody.innerHTML += `
+            <tr>
+              <td>${emp.username}</td>
+              <td>${emp.employee_id}</td>
+              <td><button onclick="promote(${emp.id})">Promote</button></td>
+            </tr>
           `;
-          container.appendChild(div);
-
-          // Employee Select
-          const option = document.createElement('option');
-          option.value = emp.id;
-          option.textContent = `${emp.username} (ID: ${emp.employee_id})`;
-          select.appendChild(option);
+          select.innerHTML += `<option value="${emp.id}">${emp.username} (${emp.employee_id})</option>`;
         });
-      } catch(err){ console.error(err); }
+
+        if(employees.length===0){
+          tableBody.innerHTML='<tr><td colspan="3">No employees found</td></tr>';
+        }
+      }catch(err){console.error(err);}
     }
 
-    // Fetch all tasks
-    async function fetchTasks(){
+    async function fetchStats(){
       try{
         const res = await fetch('/tasks');
         const tasks = await res.json();
-        const container = document.getElementById('tasksContainer');
-        container.innerHTML = '';
-        if(tasks.length === 0){
-          container.innerHTML = '<p style="text-align:center;color:#555;">No tasks available.</p>';
-          return;
-        }
-        tasks.forEach(task => {
-          const div = document.createElement('div');
-          div.className = 'task';
-          div.innerHTML = `
-            <div>
-              <strong>${task.title}</strong><br>
-              ${task.description}<br>
-              Status: <span class="status ${task.status.toLowerCase()}">${task.status}</span>
-            </div>
-          `;
-          container.appendChild(div);
-        });
-      } catch(err){ console.error(err); }
+        const completed = tasks.filter(t=>t.status==='Completed').length;
+
+        document.getElementById('totalTasks').textContent = `Tasks: ${tasks.length}`;
+        document.getElementById('completedTasks').textContent = `Completed: ${completed}`;
+        // Employees count
+        const empRes = await fetch('/admin/employees');
+        const employees = await empRes.json();
+        document.getElementById('totalEmployees').textContent = `Employees: ${employees.length}`;
+      }catch(err){console.error(err);}
     }
 
-    // Assign Task
-    document.getElementById('assignForm').addEventListener('submit', async e=>{
-      e.preventDefault();
-      const title = document.getElementById('taskTitle').value;
-      const desc = document.getElementById('taskDesc').value;
-      const employeeId = document.getElementById('employeeSelect').value;
+    document.getElementById('assignBtn').addEventListener('click', async ()=>{
+      const title = document.getElementById('taskTitle').value.trim();
+      const desc = document.getElementById('taskDesc').value.trim();
+      const empId = document.getElementById('employeeSelect').value;
+
+      if(!title || !desc || !empId){
+        alert('Fill all fields!');
+        return;
+      }
 
       try{
         const res = await fetch('/admin/assign-task',{
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({title,description:desc,employeeId})
+          body:JSON.stringify({title, description: desc, employeeId: empId})
         });
         if(res.ok){
           alert('Task assigned successfully!');
-          document.getElementById('assignForm').reset();
-          fetchTasks();
-        } else {
+          document.getElementById('taskTitle').value='';
+          document.getElementById('taskDesc').value='';
+          fetchEmployees();
+          fetchStats();
+        }else{
           alert(await res.text());
         }
-      } catch(err){ alert('Error assigning task'); }
+      }catch(err){console.error(err);}
     });
 
-    // Promote employee
-    async function promoteEmployee(empId){
-      if(confirm('Do you really want to promote this employee to admin?')){
+    async function promote(empId){
+      if(confirm('Promote this employee to admin?')){
         try{
           const res = await fetch('/admin/promote',{
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({employeeId:empId})
+            body:JSON.stringify({employeeId: empId})
           });
           if(res.ok){
-            alert('Employee promoted to admin!');
+            alert('Employee promoted!');
             fetchEmployees();
-          } else alert(await res.text());
-        } catch(err){ alert('Error promoting employee'); }
+          }else{
+            alert(await res.text());
+          }
+        }catch(err){console.error(err);}
       }
     }
 
-    // Logout
     document.getElementById('logoutBtn').addEventListener('click', async ()=>{
       if(confirm('Do you really want to logout?')){
-        try{
-          const res = await fetch('/logout',{method:'POST'});
-          if(res.ok) window.location.href = 'index.html';
-        } catch(err){ alert('Error logging out'); }
+        await fetch('/logout',{method:'POST'});
+        window.location.href='index.html';
       }
     });
 
     // Initialize
     getAdminInfo();
     fetchEmployees();
-    fetchTasks();
+    fetchStats();
+    setInterval(fetchStats, 5000); // auto update stats
   </script>
 </body>
 </html>
