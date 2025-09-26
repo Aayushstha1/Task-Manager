@@ -64,6 +64,7 @@ db.serialize(() => {
 // ----------------- LOGIN -----------------
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
+
   db.get(`SELECT * FROM users WHERE username=?`, [username], (err, user) => {
     if (err) return res.status(500).send("Server error");
     if (!user) return res.status(401).send("Invalid username or password");
@@ -72,7 +73,14 @@ app.post("/login", (req, res) => {
       return res.status(401).send("Invalid username or password");
     }
 
-    req.session.user = user;
+    // Store only essential info in session
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      employee_id: user.employee_id || null,
+    };
+
     res.json({ role: user.role });
   });
 });
@@ -88,21 +96,20 @@ app.post("/signup", (req, res) => {
   const { username, password } = req.body;
   const hashed = bcrypt.hashSync(password, 10);
 
-  // Step 1: Check if username already exists
   db.get(`SELECT * FROM users WHERE username=?`, [username], (err, row) => {
     if (err) return res.status(500).send("Server error");
     if (row) return res.status(400).send("User already exists");
 
-    // Step 2: Generate employee ID
-    db.get(`SELECT COUNT(*) as count FROM users WHERE role='employee'`, (err, row2) => {
-      const empId = "EMP" + String(row2.count + 1).padStart(3, "0");
+    // Generate a safe employee ID (avoid duplicates)
+    db.get(`SELECT MAX(id) as maxId FROM users`, [], (err, row2) => {
+      if (err) return res.status(500).send("Server error");
+      const empId = "EMP" + String((row2?.maxId || 0) + 1).padStart(3, "0");
 
-      // Step 3: Insert new employee
       db.run(
         `INSERT INTO users (username, password, role, employee_id) VALUES (?, ?, ?, ?)`,
         [username, hashed, "employee", empId],
         function (err) {
-          if (err) return res.status(500).send("Signup failed");
+          if (err) return res.status(500).send("Signup failed: " + err.message);
           res.send(`Employee registered successfully! Your ID: ${empId}`);
         }
       );
@@ -113,12 +120,7 @@ app.post("/signup", (req, res) => {
 // ----------------- GET LOGGED-IN USER INFO -----------------
 app.get("/me", (req, res) => {
   if (!req.session.user) return res.status(403).send("Not logged in");
-  const user = req.session.user;
-  res.json({
-    username: user.username,
-    role: user.role,
-    employee_id: user.employee_id,
-  });
+  res.json(req.session.user);
 });
 
 // ----------------- ADMIN: GET EMPLOYEES -----------------
@@ -139,14 +141,19 @@ app.post("/admin/assign-task", (req, res) => {
 
   const { title, description, employeeId } = req.body;
 
-  db.run(
-    `INSERT INTO tasks (title, description, assigned_to, assigned_by) VALUES (?, ?, ?, ?)`,
-    [title, description, employeeId, req.session.user.id],
-    function (err) {
-      if (err) return res.status(400).send("Error assigning task");
-      res.send("Task assigned successfully");
-    }
-  );
+  // Get internal ID of employee
+  db.get(`SELECT id FROM users WHERE employee_id=?`, [employeeId], (err, emp) => {
+    if (err || !emp) return res.status(400).send("Employee not found");
+
+    db.run(
+      `INSERT INTO tasks (title, description, assigned_to, assigned_by) VALUES (?, ?, ?, ?)`,
+      [title, description, emp.id, req.session.user.id],
+      function (err) {
+        if (err) return res.status(500).send("Error assigning task");
+        res.send("Task assigned successfully");
+      }
+    );
+  });
 });
 
 // ----------------- EMPLOYEE: SUBMIT TASK -----------------
@@ -167,42 +174,29 @@ app.post("/employee/submit-task", (req, res) => {
   );
 });
 
-// ----------------- ADMIN: PROMOTE EMPLOYEE -----------------
-app.post("/admin/promote", (req, res) => {
-  if (!req.session.user || req.session.user.role !== "admin")
-    return res.status(403).send("Access denied");
-
-  const { employeeId } = req.body;
-
-  db.run(
-    `UPDATE users SET role='admin' WHERE id=?`,
-    [employeeId],
-    function (err) {
-      if (err || this.changes === 0) return res.status(400).send("Promotion failed");
-      res.send("Employee promoted to admin");
-    }
-  );
-});
-
 // ----------------- GET TASKS -----------------
 app.get("/tasks", (req, res) => {
   if (!req.session.user) return res.status(403).send("Not logged in");
 
   if (req.session.user.role === "admin") {
-    db.all(`SELECT * FROM tasks`, [], (err, rows) => {
-      res.json(rows);
-    });
+    db.all(
+      `SELECT t.id, t.title, t.description, t.status, u.username as assigned_to_name, a.username as assigned_by_name
+       FROM tasks t
+       LEFT JOIN users u ON t.assigned_to = u.id
+       LEFT JOIN users a ON t.assigned_by = a.id`,
+      [],
+      (err, rows) => res.json(rows)
+    );
   } else {
     db.all(
-      `SELECT * FROM tasks WHERE assigned_to=?`,
+      `SELECT id, title, description, status FROM tasks WHERE assigned_to=?`,
       [req.session.user.id],
-      (err, rows) => {
-        res.json(rows);
-      }
+      (err, rows) => res.json(rows)
     );
   }
 });
 
+// ----------------- SERVER -----------------
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

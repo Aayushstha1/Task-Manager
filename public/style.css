@@ -177,3 +177,56 @@ th {
 .dashboard-card {
   margin-bottom: 20px;
 }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg,#6b73ff,#000dff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.card {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+
+input:focus {
+  border-color:#ff4081;
+  box-shadow:0 0 5px rgba(255,64,129,0.5);
+  outline:none;
+}
+
+button {
+  width:100%;
+  padding:12px;
+  margin:15px 0;
+  border:none;
+  border-radius:10px;
+  background:#ff4081;
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+}
+
+button:hover { background:#c60055; }
+
+a { color:#ff4081; text-decoration:none; }
+a:hover { text-decoration:underline; }
+
+#errorMsg { color:red; font-size:14px; margin:10px 0; }

@@ -1,246 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Employee Dashboard</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .dashboard {
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-      max-width: 900px;
-      width: 100%;
-      padding: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    header h2 { margin: 0; color: #333; }
-    .logout-btn {
-      background: #dc3545;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    .logout-btn:hover { background: #a71d2a; }
-
-    /* Profile info */
-    .profile {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 15px;
-      padding: 15px;
-      border-radius: 12px;
-      background: #f0f4ff;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .profile div { font-weight: 600; color: #333; }
-
-    /* Task stats */
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-    .stat-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 15px 20px;
-      flex: 1;
-      min-width: 120px;
-      text-align: center;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transition: 0.3s;
-    }
-    .stat-card h3 { margin: 0 0 5px 0; color: #333; }
-    .stat-card p { margin: 0; font-size: 16px; font-weight: bold; }
-
-    /* Task container */
-    #tasksContainer {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .task {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
-      border-radius: 12px;
-      background: #f1f4ff;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transition: 0.3s;
-    }
-    .task:hover { transform: translateY(-2px); }
-
-    .task div {
-      flex: 1;
-      color: #333;
-      font-weight: 500;
-    }
-
-    .task button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 8px;
-      background: #28a745;
-      color: #fff;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    .task button:hover { background: #218838; }
-
-    .status {
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    .status.assigned { background: #ffc107; color: #000; }
-    .status.completed { background: #28a745; color: #fff; }
-
-    @media (max-width: 600px) {
-      .task { flex-direction: column; align-items: flex-start; gap: 8px; }
-      .logout-btn { width: 100%; }
-      .stats { flex-direction: column; gap: 10px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Employee Dashboard</title>
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #6b73ff, #000dff);
+  margin:0; padding:0;
+  display:flex; justify-content:center; align-items:center;
+  min-height:100vh;
+}
+.dashboard {
+  background:#fff; border-radius:15px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.3);
+  width:90%; max-width:900px;
+  padding:30px;
+  display:flex; flex-direction:column;
+  gap:20px;
+}
+#logoutBtn {
+  background:#dc3545; color:#fff; border:none;
+  padding:10px 15px; border-radius:8px;
+  cursor:pointer; font-weight:bold;
+  align-self:flex-end; transition:0.3s;
+}
+#logoutBtn:hover { background:#a71d2a; }
+h2 { text-align:center; color:#333; margin-bottom:5px; }
+.profile {
+  display:flex; justify-content:space-between;
+  align-items:center; background:#f1f4ff;
+  padding:15px; border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+.profile div { font-weight:500; }
+.tasks-summary {
+  display:flex; justify-content:space-around;
+  gap:20px;
+}
+.summary-box {
+  flex:1; background:#e9f1ff; padding:15px;
+  border-radius:12px; text-align:center;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+.summary-box h3 { margin-bottom:10px; }
+.summary-box p { font-size:20px; font-weight:bold; margin:0; }
+#tasksContainer {
+  display:flex; flex-direction:column; gap:15px;
+  max-height:400px; overflow-y:auto;
+}
+.task {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:15px; border-radius:12px; background:#f1f4ff;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+.task:hover { transform:translateY(-2px); transition:0.3s; }
+.task div { flex:1; }
+.task button {
+  padding:8px 14px; border:none; border-radius:8px;
+  background:#28a745; color:#fff; cursor:pointer; font-weight:bold;
+  transition:0.3s;
+}
+.task button:hover { background:#218838; }
+.status {
+  padding:5px 12px; border-radius:6px; font-weight:600; font-size:14px;
+}
+.status.assigned { background:#ffc107; color:#000; }
+.status.completed { background:#28a745; color:#fff; }
+@media(max-width:600px){
+  .profile, .tasks-summary { flex-direction:column; gap:10px; }
+  #logoutBtn { align-self:center; width:100%; }
+}
+</style>
 </head>
 <body>
-  <div class="dashboard">
-    <header>
-      <h2>Employee Dashboard</h2>
-      <button class="logout-btn" id="logoutBtn">Logout</button>
-    </header>
 
-    <div class="profile" id="empInfo">
-      Loading profile...
-    </div>
+<div class="dashboard">
+  <button id="logoutBtn">Logout</button>
+  <h2>Employee Dashboard</h2>
 
-    <div class="stats">
-      <div class="stat-card" id="totalTasks">Total: 0</div>
-      <div class="stat-card" id="completedTasks">Completed: 0</div>
-      <div class="stat-card" id="pendingTasks">Pending: 0</div>
-    </div>
-
-    <h3>Assigned Tasks</h3>
-    <div id="tasksContainer">Loading tasks...</div>
+  <div class="profile" id="profileInfo">
+    <div>Loading profile...</div>
   </div>
 
-  <script>
-    async function getEmployeeInfo() {
-      try {
-        const res = await fetch('/me');
-        if(res.ok){
-          const data = await res.json();
-          document.getElementById('empInfo').innerHTML = `
-            <div><strong>Name:</strong> ${data.username}</div>
-            <div><strong>ID:</strong> ${data.employee_id}</div>
-          `;
-        }
-      } catch(err){
-        console.error(err);
-      }
-    }
+  <div class="tasks-summary">
+    <div class="summary-box">
+      <h3>Completed Tasks</h3>
+      <p id="completedCount">0</p>
+    </div>
+    <div class="summary-box">
+      <h3>Pending Tasks</h3>
+      <p id="pendingCount">0</p>
+    </div>
+  </div>
 
-    async function fetchTasks() {
-      try {
-        const res = await fetch('/tasks');
-        const tasks = await res.json();
+  <div id="tasksContainer">Loading tasks...</div>
+</div>
 
-        // Stats
-        const total = tasks.length;
-        const completed = tasks.filter(t => t.status==='Completed').length;
-        const pending = total - completed;
+<script>
+// Fetch profile info
+async function loadProfile() {
+  const res = await fetch('/me');
+  if(res.ok){
+    const data = await res.json();
+    document.getElementById('profileInfo').innerHTML = `
+      <div><strong>Name:</strong> ${data.username}</div>
+      <div><strong>Employee ID:</strong> ${data.employee_id}</div>
+      <div><strong>Role:</strong> ${data.role}</div>
+    `;
+  }
+}
 
-        document.getElementById('totalTasks').textContent = `Total: ${total}`;
-        document.getElementById('completedTasks').textContent = `Completed: ${completed}`;
-        document.getElementById('pendingTasks').textContent = `Pending: ${pending}`;
+// Fetch tasks and summary
+async function loadTasks() {
+  const res = await fetch('/tasks');
+  const tasks = await res.json();
+  const container = document.getElementById('tasksContainer');
+  container.innerHTML = '';
+  let completed=0, pending=0;
 
-        // Task list
-        const container = document.getElementById('tasksContainer');
-        container.innerHTML = '';
-        if(tasks.length === 0){
-          container.innerHTML = '<p style="text-align:center;color:#555;">No tasks assigned yet.</p>';
-          return;
-        }
+  if(tasks.length===0){
+    container.innerHTML='<p style="text-align:center;color:#555;">No tasks assigned yet.</p>';
+  }
 
-        tasks.forEach(task => {
-          const div = document.createElement('div');
-          div.className = 'task';
-          div.innerHTML = `
-            <div>
-              <strong>${task.title}</strong><br>
-              ${task.description}<br>
-              <span class="status ${task.status.toLowerCase()}">${task.status}</span>
-            </div>
-            ${task.status === 'Assigned' ? `<button onclick="submitTask(${task.id})">Mark Completed</button>` : ''}
-          `;
-          container.appendChild(div);
-        });
+  tasks.forEach(task=>{
+    if(task.status==='Completed') completed++; else pending++;
+    const div=document.createElement('div');
+    div.className='task';
+    div.innerHTML=`
+      <div>
+        <strong>${task.title}</strong><br>
+        ${task.description}<br>
+        <span class="status ${task.status.toLowerCase()}">${task.status}</span>
+      </div>
+      ${task.status==='Assigned'? `<button onclick="markComplete(${task.id})">Mark Completed</button>`:''}
+    `;
+    container.appendChild(div);
+  });
 
-      } catch(err){
-        console.error(err);
-      }
-    }
+  document.getElementById('completedCount').textContent = completed;
+  document.getElementById('pendingCount').textContent = pending;
+}
 
-    async function submitTask(taskId){
-      try {
-        const res = await fetch('/employee/submit-task', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({taskId})
-        });
-        if(res.ok){
-          alert('Task marked as completed!');
-          fetchTasks();
-        } else {
-          alert(await res.text());
-        }
-      } catch(err){
-        alert('Error completing task.');
-        console.error(err);
-      }
-    }
+// Mark task as completed
+async function markComplete(taskId){
+  const res = await fetch('/employee/submit-task',{
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({ taskId })
+  });
+  if(res.ok){
+    alert('Task marked as completed!');
+    loadTasks();
+  } else alert(await res.text());
+}
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      if(confirm('Do you really want to logout?')){
-        await fetch('/logout', {method:'POST'});
-        window.location.href = 'index.html';
-      }
-    });
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+  if(confirm('Do you really want to logout?')){
+    const res = await fetch('/logout',{method:'POST'});
+    if(res.ok) window.location.href='index.html';
+  }
+});
 
-    getEmployeeInfo();
-    fetchTasks();
-  </script>
+// Initialize
+loadProfile();
+loadTasks();
+</script>
+
 </body>
 </html>

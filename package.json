@@ -3,17 +3,26 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "��#\u0000 \u0000T\u0000a\u0000s\u0000k\u0000-\u0000M\u0000a\u0000n\u0000a\u0000g\u0000e\u0000r\u0000\r\u0000 \u0000",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "sqlite3": "^5.1.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aayushstha1/Task-Manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Aayushstha1/Task-Manager/issues"
+  },
+  "homepage": "https://github.com/Aayushstha1/Task-Manager#readme"
 }
