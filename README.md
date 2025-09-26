@@ -9,10 +9,6 @@ A simple **Task Management System** built using **Node.js**, **Express.js**, **S
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Folder Structure](#folder-structure)
-- [Screenshots](#screenshots)
-- [License](#license)
-
 ---
 
 ## Features
@@ -47,3 +43,4 @@ A simple **Task Management System** built using **Node.js**, **Express.js**, **S
 1. Clone the repository:
 ```bash
 git clone https://github.com/Aayushstha1/task-manager.git
+
